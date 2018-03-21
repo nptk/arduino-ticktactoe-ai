@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include "Ucglib.h"
 #include "Keypad.h"
-//#define ARRAYSIZE 10
     
 /*
   Hardware SPI Pins:
@@ -40,14 +39,6 @@ void loop(void) {
 	ucg.setFont(ucg_font_helvB08_tr);
 	ucg.clearScreen();
 	
-	//full range gBox
-	/*
-	ucg.setColor(0, 255, 0, 0);
-	ucg.setColor(1, 0, 255, 0);
-	ucg.setColor(2, 255, 0, 255);
-	ucg.setColor(3, 0, 255, 255);
-	ucg.drawGradientBox(0, 0, ucg.getWidth(), ucg.getHeight());*/
-	
 	// CHOOSE MODE
 	ucg.setColor(255, 255, 255); // white
 	ucg.setPrintPos(25, 10);
@@ -83,14 +74,12 @@ void loop(void) {
 		} while ( keypadInput == NO_KEY || keypadInput != '1' && keypadInput != '2');
 		
 		//define board and player turn
-		//int board[9] = { 0,0,0,0,0,0,0,0,0 };
 		unsigned player = 1; // 1 player first | 2 ai first
 
-		if (keypadInput == '1') player = 1;
 		if (keypadInput == '2') player = 2;
 		else player = 1;
 
-		unsigned turn;
+		unsigned turn = 0;
 		String turnText[2] = { "Ai Thinking", "Your Turn" };
 
 		for (turn = 0; turn < 9 && win(board) == 0; ++turn) {
@@ -102,20 +91,11 @@ void loop(void) {
 				
 				
 				if (turn == 0 && player == 2) { // ai first move - random
-					//Serial.print("\tRND");
 					randomComputerMove(board);
 				}
-				/*
-				else if (turn == 1 && player == 1) { // player first - ai open book
-					//Serial.print("\nOPENBOOK");
-					computerFastOpenMove(board);
-				}*/
 				else{
-					//Serial.print("\tCAL");
 					computerMove(board);
 				}
-				
-				//computerMove(board);
 			} else { // Human
 				drawTurnText(1, turnText);
 				playerMove(board);
@@ -132,11 +112,13 @@ void loop(void) {
 		
 		for (turn = 0; turn < 9 && win(board) == 0; ++turn) {
 			draw(board);
-			if ((turn + player) % 2 == 0) { // Player 1 | -1  = RED
+			if ((turn + player) % 2 == 0) { 
+				// Player 1st, RED (-1)
 				drawTurnText(0, turnText);
 				pvpMove(1,board);
 			} 
-			else { // Player 2 | 1 = BLUE
+			else { 
+				// Player 2nd, BLUE (1)
 				drawTurnText(1, turnText);
 				pvpMove(-1,board);
 			}
@@ -151,15 +133,6 @@ void loop(void) {
 
 void drawBoardAndBG() {
 	ucg.clearScreen();
-	
-	//bg 
-	/*
-	ucg.setColor(0, 255, 0, 0);
-	ucg.setColor(1, 0, 255, 0);
-	ucg.setColor(2, 255, 0, 255);
-	ucg.setColor(3, 0, 255, 255);
-	ucg.drawGradientBox(0, 0, ucg.getWidth(), ucg.getHeight());
-	*/
 	
 	//big box
 	ucg.setColor(255, 255, 255);
@@ -218,11 +191,6 @@ void drawTurnText(int input, String turnText[2]) {
 }
 
 void drawResult(int input, int board[9], String resultString[3]) {
-	
-	//clear below
-	/*ucg.setColor(0, 0, 0, 0);
-	ucg.drawBox(0, 50, ucg.getWidth(), ucg.getHeight() - 50);*/
-
 	//set text attrb
 	draw(board);
 	ucg.setPrintPos(18, 60);
@@ -284,7 +252,6 @@ int minimax(int board[9], int player, int& depth) {
 					saveDepth = newDepth;
 				}
 				if (thisScore == score && newDepth<saveDepth) {
-					//printf("\nCALLED AI");
 					score = thisScore;
 					move = i;
 					saveDepth = newDepth;
@@ -312,7 +279,6 @@ int minimax(int board[9], int player, int& depth) {
 					saveDepth = newDepth;
 				}
 				if (thisScore == score && newDepth<saveDepth) {
-					//printf("\nCALLED HU");
 					score = thisScore;
 					move = i;
 					saveDepth = newDepth;
@@ -357,7 +323,6 @@ void computerMove(int board[9]) {
 				saveDepth = newDepth;
 			}
 			if (tempScore == score && newDepth<saveDepth) {
-				//printf("\nCALLED");
 				score = tempScore;
 				move = i;
 				saveDepth = newDepth;
@@ -385,10 +350,6 @@ void playerMove(int board[9]) {
 				move = keypadInput - '1';// compare ascii char
 			}
 		} while (keypadInput == NO_KEY || keypadInput == '*' || keypadInput == '#');
-
-		if (board[move] != 0) {
-			//Serial.println("\nInvalid Move");
-		}
 	} while (move > 8 || move < 0 || board[move] != 0);
 	board[move] = -1;
 }
@@ -404,10 +365,6 @@ void pvpMove(int input,int board[9]){
 				move = keypadInput - '1';// compare ascii char
 			}
 		} while (keypadInput == NO_KEY || keypadInput == '*' || keypadInput == '#');
-
-		if (board[move] != 0) {
-			//Serial.println("\nInvalid Move");
-		}
 	} while (move > 8 || move < 0 || board[move] != 0);
 	board[move] = input; //****
 }
