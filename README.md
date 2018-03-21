@@ -1,5 +1,5 @@
 # arduino-ticktactoe-ai
-using minimax algorithm with lowest depth
+Using minimax algorithm with lowest depth
 
 # Require Hardware
   - Arduino UNO ( can be any Arduino, just change the hardware/software pin defined in code )
@@ -15,7 +15,7 @@ Sketch->Include Library->Manage Libraries-> install these libs
 - [Ucglib v1.3](https://github.com/olikraus/ucglib/wiki)
 
 # SPI pins
-you can use either hardware or software pin. Hardware pin is faster and less wiring.
+You can use either hardware or software pin. Hardware pin is faster and less wiring.
 
 If you want to connect more hardwares to Ardiono UNO but you dont enough available digital/analog pins.
 
